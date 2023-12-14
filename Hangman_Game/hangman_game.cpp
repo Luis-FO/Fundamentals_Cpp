@@ -110,6 +110,30 @@ void take_guess(){
     }
     cout << endl;
 }
+void save_file(vector<string> words_list){
+    ofstream file;
+    file.open("words.txt");
+    if(file.is_open()){
+        file << words_list.size() << endl;
+        for(string word: words_list){
+            file << word << endl;
+        }
+        file.close();
+    }else{
+        cout<<"Unable to access word bank!"<<endl;
+        exit(0);
+    }
+}
+void add_new_word(){
+    cout<<"Enter a new word (with capital letters): ";
+    string new_word;
+    cin >> new_word;
+
+    vector<string> words_list = read_wfile();
+    words_list.push_back(new_word);
+    save_file(words_list);
+
+}
 
 int main(){
 
@@ -126,6 +150,12 @@ int main(){
     cout<< "The secret word was: "<< SECRET_WORD << endl;
     if(check_win()){
         cout << "Congratulations! You guessed the secret word!" << endl;
+        cout<< "Do you want to add a new word to the bank?(Y/N)"<<endl;
+        char op;
+        cin>>op;
+        if(op == 'Y'){
+            add_new_word();
+        }
     }else{
         cout << "Game Over! try again!" << endl;
     }
