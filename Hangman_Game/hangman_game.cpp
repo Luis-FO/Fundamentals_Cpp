@@ -12,6 +12,7 @@ string SECRET_WORD;
 map<char, bool> guesses;
 vector<char> wrong_guesses;
 
+///  @brief Check if the guess is part of the secret word
 bool check_guess(char guess){
     for(char letter: SECRET_WORD){
         if(guess == letter)
@@ -22,6 +23,7 @@ bool check_guess(char guess){
     return false;
 }
 
+/// @brief Check if the word was guessed
 bool check_win(){
     for(char letter: SECRET_WORD){
         if(!guesses[letter]){
@@ -31,10 +33,12 @@ bool check_win(){
     return true;
 }
 
+/// @brief Check if the attempts are over.
 bool is_hanged(){
     return wrong_guesses.size() == 5;
 }
 
+/// @brief Print the game intro
 void game_header(){
     cout << "*********************" << endl;
     cout << "*** Hangman Game ***" << endl;
@@ -42,6 +46,7 @@ void game_header(){
     cout << endl;
 }
 
+/// @brief Shows wrong guesses up to now
 void print_wrong_guesses(){
     cout << "Wrong guesses: ";
     for(char letter: wrong_guesses){
@@ -50,28 +55,36 @@ void print_wrong_guesses(){
     cout << endl;
 }
 
-/// @brief Read a file with words to play an return a random word.
+/// @brief Read a word bank file.
 vector<string> read_wfile(){
     ifstream file;
     file.open("words.txt");
-    unsigned int num_words = 0;
-    file >> num_words;
+    if(file.is_open()){
+        unsigned int num_words = 0;
+        file >> num_words;
 
-    vector<string> words_list;
-    for(int i = 0;i<num_words;i++){
-        string word;
-        file>>word;
-        words_list.push_back(word);
+        vector<string> words_list;
+        for(int i = 0;i<num_words;i++){
+            string word;
+            file>>word;
+            words_list.push_back(word);
+        }
+        file.close();
+        return words_list;
+    }else{
+        cout<<"Unable to access word bank!"<<endl;
+        exit(0);
     }
-    return words_list;
-}
 
-string random_word_selection(){
+}
+/// @brief Select a random word to play
+void random_word_selection(){
     vector<string> words_list = read_wfile();
     srand(time(NULL));
-    return words_list[rand()%words_list.size()];
+    SECRET_WORD = words_list[rand()%words_list.size()];
 }
 
+/// @brief Print the dashes with the correct guesses up to now.
 void print_dashes(){
     for(char letter: SECRET_WORD){
         if(guesses[letter]){
@@ -82,6 +95,7 @@ void print_dashes(){
     }
 }
 
+/// @brief Take the player's guess
 void take_guess(){
     char guess;
     cout<< "\nYour guess: ";
@@ -96,10 +110,11 @@ void take_guess(){
     }
     cout << endl;
 }
+
 int main(){
 
     game_header();
-    SECRET_WORD = random_word_selection();
+    random_word_selection();
     //Game end whem word was guessed or whem 
     while(!check_win() && !is_hanged()){
 
